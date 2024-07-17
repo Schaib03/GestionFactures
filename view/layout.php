@@ -8,7 +8,7 @@
     <title>Document</title>
 </head>
 <body>
-    <a  href="facture1.php"> <button  class="btn btn-primary">Ajouter une facture</button></a>
+    <a  href="../facture1.php"> <button  class="btn btn-primary">Ajouter une facture</button></a>
     <table class ="table table-bordered">
         <thead>
             <tr>
@@ -24,20 +24,23 @@
 
         <tbody>
         <?php 
-        require_once 'model/facture.php';
-        $listeFacture = listeFacture(); 
+        require_once __DIR__.'/../model/facture.php';
+        $listeFacture = listeFacture();  
+        $i=1; 
         foreach($listeFacture as $facture): ?>    
             <tr>
-                <td><?= $facture->numero ?></td>
+               
+                <td><?= $i ?></td>
                 <td><?= $facture->date ?></td>
                 <td><?= $facture->montantTotal ?></td>
                 <td><?= $facture->etat ?></td>
                 <td><?= $facture->idC ?></td>
                 <td><?= $facture->idP ?></td>
                 
-                <td><button><a href="modifFact.php?numero=<?= $facture->numero ?>" action="modifFact.php" method="get">Edit</a></button>
-                <button><a href="suppFact.php?numero=<?= $facture->numero ?>" action="suppFact.php" method="get">Delete</a></button></td>
+                <td><button><a href="../modifFact.php?numero=<?= $facture->numero ?>&id=<?= $i ?>" action="../modifFact.php" method="get">Edit</a></button>
+                <button><a href="../suppFact.php?num=<?= $facture->numero ?>" action="../suppFact.php" method="get">Delete</a></button></td>
             </tr>
+            <?php $i++ ;?>
         <?php endforeach ?>
         </tbody>
     </table>

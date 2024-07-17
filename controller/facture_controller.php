@@ -10,7 +10,7 @@
  function storeFacture($d, $m, $e, $idC, $idP) {
    $fac = new Facture($d, $m, $e, $idC, $idP);
    if ($fac->ajouterFacture()) {
-       header('Location: index.php');
+       header('Location: view/layout.php');
    } else {
        echo 'Error adding facture';
    }
@@ -20,7 +20,7 @@
    $fac = new Facture($d, $m, $e, $idC, $idP);
    if($fac->loadFactureByNumero($num)) {
        $fac->modifierFacture($d, $m, $e, $idC, $idP);
-       header('Location: index.php');
+       header('Location: view/layout.php');
    }
    else {
        echo 'Error editing facture';
@@ -31,7 +31,7 @@ function deleteFacture($d, $m, $e, $idC, $idP,$num) {
    $fac = new Facture($d, $m, $e, $idC, $idP);
    if($fac->loadFactureByNumero($num)) {
        $fac->supprimerFacture($num);
-       header('Location: index.php');
+       header('Location: view/layout.php');
    }
    else {
        echo 'Error deleting facture';

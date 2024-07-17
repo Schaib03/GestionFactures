@@ -1,4 +1,5 @@
 <?php
+
 class Facture {
     private $numero;
     private $date;
@@ -6,24 +7,56 @@ class Facture {
     private $etat;
     private $idC;
     private $idP;
+    private $idU;
 
     public function __construct($date, $montantTotal, $etat, $idC, $idP) {
+        session_start();
+    if(isset($_SESSION['login'])) {
+        $idser = $_SESSION['id'];
+    } else {
+        echo "You are not logged i wown.";
+    }
+    
+
         $this->date = $date;
         $this->montantTotal = $montantTotal;
         $this->etat = $etat;
         $this->idC = $idC;
         $this->idP = $idP;
+        $this->idU = $idser;
+        
+    }
+    public function getDate() {
+        return $this->date;
+    }
+    public function getMontantTotal() {
+        return $this->montantTotal;
+    }
+    public function getEtat() {
+        return $this->etat;
+    }
+    public function getIdC() {
+        return $this->idC;
+    }
+    public function getIdP() {
+        return $this->idP;
+    }
+    public function getIdU() {
+        return $this->idU;
     }
    public function ajouterFacture() {
         $pdo = db_connect();
-        $query = "INSERT INTO factures (date, montantTotal, etat, idC, idP) VALUES (:date, :montantTotal, :etat, :idC, :idP)";
+        $query = "INSERT INTO factures (date, montantTotal, etat, idC, idP,idU) VALUES (:date, :montantTotal, :etat, :idC, :idP,:idU)";
         $stmt = $pdo->prepare($query);
+        session_start();
+        $user = $_SESSION['id'];
         
         $stmt->bindParam(':date', $this->date);
         $stmt->bindParam(':montantTotal', $this->montantTotal);
         $stmt->bindParam(':etat', $this->etat);
         $stmt->bindParam(':idC', $this->idC);
         $stmt->bindParam(':idP', $this->idP);
+        $stmt->bindParam(':idU', $user);
         
         if ($stmt->execute()) {
             return true;
@@ -102,10 +135,15 @@ function db_connect(){
     return new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
 }
 function listeFacture(){
-
+    session_start();
+    if(isset($_SESSION['login'])) {
+        $iduser = $_SESSION['id'];
+    }
     $pdo = db_connect();
-    $query = 'SELECT * FROM factures';
-    $stmt = $pdo->query($query);
+    $query = 'SELECT * FROM factures where idU=:idU';
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':idU', $iduser);
+    $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 
 }

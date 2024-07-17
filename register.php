@@ -6,7 +6,7 @@
 </div>
 <div class="form-group">
     <label for="login">Login</label>
-    <input type="text" class="form-control" name="login" id="login">
+    <input type="mail" class="form-control" name="login" id="login">
 </div>
 <div class="form-group">
     <label for="psw">Password</label>

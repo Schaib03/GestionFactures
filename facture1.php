@@ -32,7 +32,7 @@
             <input type="text" class="form-control" name="idP" id="idPaiement">
         </div>
 
-        <button type="submit" onclick="document.location='index.php'" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
 </body>

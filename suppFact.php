@@ -1,11 +1,10 @@
 <?php
-require_once 'view/layout.php';
 require_once 'controller/facture_controller.php';
 require_once 'model/facture.php';
 $pdo = db_connect();
 $query = "SELECT * FROM factures WHERE numero = :numero";
 $stmt = $pdo->prepare($query);
-$numero = $_GET['numero'];
+$numero = $_GET['num'];
 $stmt->bindParam(':numero', $numero);
 $stmt->execute();
 $facture = $stmt->fetch(PDO::FETCH_OBJ);
