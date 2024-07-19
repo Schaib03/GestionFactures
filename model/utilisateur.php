@@ -5,6 +5,18 @@ class utilisateur{
     private $login;
     private $password;
 
+    public function getId() {
+        return $this->id;
+    }
+    public function getNom() {
+        return $this->nom;
+    }
+    public function getLogin() {
+        return $this->login;
+    }
+    public function getPassword() {
+        return $this->password;
+    }
     public function __construct($nom, $login, $password) {
         $this->nom = $nom;
         $this->login = $login;
@@ -42,6 +54,22 @@ class utilisateur{
             return false;
         }
     }
+    public function selectById($id) {
+        $pdo = dbU_connect();
+        $query = "SELECT * FROM utilisateur WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $this->id = $user['id'];
+            $this->nom = $user['nom'];
+            $this->login = $user['login'];
+            $this->password = $user['password'];
+            return $this;
+        }
+        return null;
+    }
     public function modifierUtilisateur($nom, $login, $password) {
 
     }
@@ -61,4 +89,6 @@ class utilisateur{
 }
 function dbU_connect(){
     return new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
-}?>
+}
+
+?>

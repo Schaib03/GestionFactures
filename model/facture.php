@@ -10,12 +10,17 @@ class Facture {
     private $idU;
 
     public function __construct($date, $montantTotal, $etat, $idC, $idP) {
-        session_start();
-    if(isset($_SESSION['login'])) {
-        $idser = $_SESSION['id'];
+    if(session_start()){
+        if(isset($_SESSION['login'])) {
+             $this->idU = $_SESSION['id'];
     } else {
         echo "You are not logged i wown.";
     }
+    }
+    else{
+        echo "You are not logged in.";
+    }
+    
     
 
         $this->date = $date;
@@ -23,7 +28,7 @@ class Facture {
         $this->etat = $etat;
         $this->idC = $idC;
         $this->idP = $idP;
-        $this->idU = $idser;
+        
         
     }
     public function getDate() {
@@ -45,27 +50,40 @@ class Facture {
         return $this->idU;
     }
    public function ajouterFacture() {
-        $pdo = db_connect();
-        $query = "INSERT INTO factures (date, montantTotal, etat, idC, idP,idU) VALUES (:date, :montantTotal, :etat, :idC, :idP,:idU)";
-        $stmt = $pdo->prepare($query);
-        session_start();
-        $user = $_SESSION['id'];
+    try {
+        // Assuming db_connect() is your function to connect to the database
+        $pdo = dbC_connect();
         
-        $stmt->bindParam(':date', $this->date);
+        $query = "INSERT INTO factures (date, montantTotal, etat, idC, idP, idU) VALUES (:date, :montantTotal, :etat, :idC, :idP, :idU)";
+        $stmt = $pdo->prepare($query);
+        $currentDateTime = (new DateTime())->format('Y-m-d');
+        $state="En cours";
+        // Binding parameters
+        $stmt->bindParam(':date', $currentDateTime);
         $stmt->bindParam(':montantTotal', $this->montantTotal);
-        $stmt->bindParam(':etat', $this->etat);
+        $stmt->bindParam(':etat', $state);
         $stmt->bindParam(':idC', $this->idC);
         $stmt->bindParam(':idP', $this->idP);
-        $stmt->bindParam(':idU', $user);
+        $stmt->bindParam(':idU', $this->idU);
         
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+        // Execute the statement
+        $stmt->execute();
+        
+        // Optionally, you can return true to indicate success
+        return true;
+    } catch (PDOException $e) {
+        // Catch PDO specific exceptions
+        echo "PDO error: " . $e->getMessage();
+        return false;
+    } catch (Exception $e) {
+        // Catch any other exceptions
+        echo "General error: " . $e->getMessage();
+        return false;
     }
+    
+}
     public function modifierFacture($date, $montantTotal, $etat, $idC, $idP) {
-        $pdo = db_connect();
+        $pdo = dbC_connect();
         $query = "UPDATE factures SET date=:date, montantTotal=:montantTotal, etat=:etat, idC=:idC, idP=:idP WHERE numero=:numero";
         $stmt = $pdo->prepare($query);
         
@@ -83,7 +101,7 @@ class Facture {
         }
     }
     public function loadFactureByNumero($numero) {
-        $pdo = db_connect();
+        $pdo = dbC_connect();
         $query = "SELECT * FROM factures WHERE numero = :numero";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':numero', $numero);
@@ -106,7 +124,7 @@ class Facture {
         }
     }
     public function supprimerFacture($num) {
-        $pdo = db_connect();
+        $pdo = dbC_connect();
         $query = "DELETE FROM factures WHERE numero = :numero";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':numero', $num);
@@ -119,7 +137,7 @@ class Facture {
             $stmt = $pdo->query($query);    
             $result = $stmt->fetch(PDO::FETCH_OBJ);
             if ($result->count == 0) {
-                $pdo = db_connect();
+                $pdo = dbC_connect();
                 $query = "TRUNCATE TABLE factures";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute();
@@ -131,7 +149,7 @@ class Facture {
         }
     }  
 }
-function db_connect(){
+function dbC_connect(){
     return new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
 }
 function listeFacture(){
@@ -139,7 +157,7 @@ function listeFacture(){
     if(isset($_SESSION['login'])) {
         $iduser = $_SESSION['id'];
     }
-    $pdo = db_connect();
+    $pdo = dbC_connect();
     $query = 'SELECT * FROM factures where idU=:idU';
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':idU', $iduser);

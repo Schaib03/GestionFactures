@@ -3,7 +3,7 @@ require_once __DIR__.'/../model/utilisateur.php';
 function storeUtilisateur($n,$l,$p) {
    $user = new utilisateur($n,$l,$p);
    if ($user->ajouterUtilisateur()) {
-       header('Location: view/userLayout.php');
+       header('Location: index.php');
    } else {
        echo 'Error adding user';
    }
@@ -22,7 +22,7 @@ function loginAction($u,$ps){
             session_start();
             $_SESSION['login'] = $u;
             $_SESSION['id'] = $id;
-            header('location: layout.php');
+            header('location: userLayout.php');
             return true;
         } 
         else {
@@ -35,6 +35,5 @@ function loginAction($u,$ps){
     }
     else{
         echo "error identifying user 2 ";
-        header('location: index.php');
     }
 }

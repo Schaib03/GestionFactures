@@ -8,12 +8,20 @@
     require_once ('facture1.php');
  }
  function storeFacture($d, $m, $e, $idC, $idP) {
-   $fac = new Facture($d, $m, $e, $idC, $idP);
-   if ($fac->ajouterFacture()) {
-       header('Location: view/layout.php');
-   } else {
-       echo 'Error adding facture';
-   }
+    try {
+        // Assuming $d, $m, $e, $idC, and $idP are already defined
+        $fac = new Facture($d, $m, $e, $idC, $idP);
+        
+        if ($fac->ajouterFacture()) {
+            header('Location: view/layout.php');
+            exit(); // Make sure to call exit after header redirection
+        } else {
+            echo 'Error adding facture';
+        }
+    } catch (Exception $e) {
+        echo "An error occurred: " . $e->getMessage();
+    }
+    
 }
  function editFacture($d, $m, $e, $idC, $idP,$num) {
    require_once ('model/facture.php');

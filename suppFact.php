@@ -1,7 +1,7 @@
 <?php
 require_once 'controller/facture_controller.php';
 require_once 'model/facture.php';
-$pdo = db_connect();
+$pdo = dbC_connect();
 $query = "SELECT * FROM factures WHERE numero = :numero";
 $stmt = $pdo->prepare($query);
 $numero = $_GET['num'];

@@ -4,7 +4,7 @@
     $ps=$_POST['psw'];
     if(loginAction($u,$ps))
     {
-        header('location: layout.php');
+        header('location: userLayout.php');
     }
     else
     {
