@@ -34,19 +34,18 @@
 </style>
 
 </head>
-<?php require_once 'model/client.php';
+<?php require_once 'model/paiement.php';
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 }
-if (isset($_GET['num'])) {
-    $num = $_GET['num'];
+if (isset($_GET['number'])) {
+    $num = $_GET['number'];
 }
-$client=new client(0,0,0,0,0);  
-if($client->loadClientById($num)) {
-   $no=$client->getNom();
-   $ad=$client->getAdresse();
-   $em=$client->getEmail();
-   $te=$client->getTelephone();
+$paiement=new Paiement(0,0,0);  
+if($paiement->loadPaiementById($num)) {
+   $no=$paiement->getDateP();
+   $ad=$paiement->getMontant();
+   $em=$paiement->getMethode();
 
  }
 ?>
@@ -59,38 +58,45 @@ if($client->loadClientById($num)) {
             <!-- Nested Row within Card Body -->
             <div class="row">
                 <div class="col-lg-6 d-none d-lg-block bg-login-image">
-                    <img src="img/logo.png"  class="animated-image" alt="logo" style="width: 400px; height: 400px; margin-left: 70px;">
+                    <img src="img/logo.png" class="animated-image" alt="logo" style="width: 400px; height: 400px; margin-left: 70px;">
                 </div>
                 <div class="col-lg-6">
                     <div class="p-5">
                         <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Ajouter Client</h1>
+                            <h1 class="h4 text-gray-900 mb-4">Modifier Paiement</h1>
                         </div>
-                        <form action="editClient.php" method="post" class="user">
+                        <form action="editPaiement.php" method="post" class="user">
+                        <div class="form-group" style="display:none">
+                             <label for="idPaiement">Id Paiement</label>
+                             <input type  ="number" class="form-control" name="idPaiement" id="idPaiement" value="<?php echo htmlspecialchars($num); ?>" readonly>   
+       
+                        </div>
                         <div class="form-group" >
-                             <label for="idClient">Id Client</label>
-                             <input type  ="number" class="form-control" name="idClient" id="idClient" value="<?php echo htmlspecialchars($num); ?>" readonly>   
+                             <label for="idP">Id Paiement</label>
+                             <input type  ="number" class="form-control" name="idP" id="idP" value="<?php echo htmlspecialchars($id); ?>" readonly>   
        
                         </div>
                             <div class="form-group">
-                                <label for="nom">Nom du Client</label>
-                              <input type="text" class="form-control" name="nom" id="nom" value="<?php echo htmlspecialchars($no); ?>">                            </div> 
+                                <label for="dateP">Date du paiement</label>
+                              <input type="date" class="form-control" name="dateP" id="dateP">                            </div> 
                             <div class="form-group">
-                                 <label for="adresse">Adresse</label>
-                                 <input type="text" class="form-control" name="adresse" id="adresse" value = "<?php echo htmlspecialchars($ad); ?>">                            </div>
-                            <div class="form-group"> 
-                                <label for="email">E-mail</label>
-                                <input type="email" class="form-control" aria-describedby="emailHelp" name="email" id="email" value = "<?php echo htmlspecialchars($em); ?>">                            </div>     
-                            <div class="form-group">
-                                    <label for="tel">Téléphone</label>
-                                    <input type="tel" name="tel" class="form-control" pattern="\+[0-9]{1,3}[0-9]{4,14}" value = "<?php echo htmlspecialchars($te); ?>" required>
-                            </div>
+                                 <label for="montant">Montant</label>
+                                 <input type="number" step="0.001" placeholder="15.756" class="form-control" name="montant" id="montant">                            </div>
+                                 <div class="form-group">
+                                <label for="methode">Méthode du paiement</label>
+                                <select id="methode" class="form-control" name="methode">
+                                        <option value="Virement">Virement</option>
+                                        <option value="Chèque">Chèque</option>
+                                        <option value="Carte bancaire">Carte bancaire</option>
+                                    </select>
+                                </div>  
+                           
                         
                             
                             <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Ajouter</button>
                         </form>
                         <hr>
-                        <a href="view/clientLayout.php" class="btn btn-primary btn-user btn-block">Retour</a>
+                        <a href="view/PaiementLayout.php" class="btn btn-primary btn-user btn-block">Retour</a>
 
                     </div>
                 </div>

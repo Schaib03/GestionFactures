@@ -5,7 +5,18 @@ class Client {
     private $adresse;
     private $email;
     private $telephone;
+    private $idUser;
     public function __construct($nom, $adresse, $email,$telephone) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+            if(isset($_SESSION['login'])) {
+                $this->idUser = $_SESSION['id'];}
+            else{echo "You are not logged i wown.";
+            }
+        } else {
+            if(isset($_SESSION['login'])) {
+                $this->idUser = $_SESSION['id'];
+        }}
         $this->nom = $nom;
         $this->adresse = $adresse;
         $this->email = $email;
@@ -25,12 +36,13 @@ class Client {
     }
     public function ajouterClient() {
         $pdo = db_connect();
-        $query = "INSERT INTO client (nom, adresse, email, telephone) VALUES (:nom, :adresse, :email, :telephone)";
+        $query = "INSERT INTO client (nom, adresse, email, telephone, idUser) VALUES (:nom, :adresse, :email, :telephone, :idUser)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':nom', $this->nom);
         $stmt->bindParam(':adresse', $this->adresse);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':telephone', $this->telephone);
+        $stmt->bindParam(':idUser',$this->idUser);
 
         if($stmt->execute()) {
             return true;
@@ -94,16 +106,29 @@ class Client {
             return false; 
         }
     }
+    
 
 }
 function db_connect(){
     return new PDO('mysql:host=localhost;dbname=appwebfactures','root','');
 }
  function listeClient() { 
+    if(isset($_SESSION['login'])) {
+        $iduser = $_SESSION['id'];
+    }
     $pdo = db_connect();
-    $query = "SELECT * FROM client";
+    $query = "SELECT * FROM client where idUser = :idUser";
     $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':idUser', $iduser);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+function listeClientByID($id) {
+    $pdo = db_connect();
+    $query = "SELECT * FROM client WHERE idClient = :idClient";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':idClient', $id);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_OBJ);
 }
 ?>

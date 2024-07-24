@@ -18,6 +18,19 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        @keyframes bounce {
+    0%, 100% {
+        transform: translateY(0); /* Start and end at the original position */
+    }
+    50% {
+        transform: translateY(100px); /* Move up 100px */
+    }
+}
+.animated-image{
+    animation: bounce 3s infinite;
+}
+</style>
 
 </head>
 <?php require_once 'model/facture.php';
@@ -46,13 +59,34 @@ if($fac->loadFactureByNumero($num)) {
             <!-- Nested Row within Card Body -->
             <div class="row">
                 <div class="col-lg-6 d-none d-lg-block bg-login-image">
-                    <img src="img/logo.png" alt="logo" style="width: 400px; height: 400px; margin-left: 70px;">
+                    <img src="img/logo.png" class ="animated-image  " alt="logo" style="width: 400px; height: 400px; margin-left: 70px;">
                 </div>
                 <div class="col-lg-6">
                     <div class="p-5">
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Modifier Facture</h1>
                         </div>
+                                                <?php
+                                                try {
+                            // Connexion à la base de données
+                            $pdo=new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
+                            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                            // Préparation et exécution de la requête pour obtenir les idClient
+                            $query = 'SELECT idClient FROM client where idUser = :idUser';
+                            
+                            $id=$_SESSION['id'];
+                            $stmt = $pdo->prepare($query);
+                            $stmt->bindParam(':idUser', $id, PDO::PARAM_INT);
+                            $stmt->execute();
+
+                            // Récupération des résultats
+                            $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        } catch (PDOException $e) {
+                            echo 'Erreur : ' . $e->getMessage();
+                        }
+                        ?>
+
                         <form action="editfact.php" method="post" class="user">
                         <div class="form-group" style="display: none;">
                             <label for="num">Numero</label>
@@ -64,23 +98,54 @@ if($fac->loadFactureByNumero($num)) {
                             <input type ="number" class="form-control" name="id" id="id" value="<?php echo htmlspecialchars($id); ?>" readonly>   </div>
                             <div class="form-group">
                                 <label for="etat">Date</label>
-                              <input type="date" class="form-control" name="date" id="date" required>                            </div> 
+                              <input type="date" class="form-control" name="date" id="date" value="<?php echo htmlspecialchars($d); ?>" required>                            </div> 
                             <div class="form-group">
                                  <label for="montantTotal">MontantTotal</label>
-                                 <input type="text" class="form-control" name="montantTotal" id="montantTotal" required>                            </div>
-                            <div class="form-group"> 
-                                <label for="etat">Etat</label>
-                                <input type="text" class="form-control" name="etat" id="etat" required>                            </div>     
-                            <div class="form-group">
-                                    <label for="idClient">IdClient</label>
-                                    <input type="text" class="form-control" name="idC" id="idClient" required>
-                            </div>
+                                 <input type="number" class="form-control" step="0.001" placeholder="99.999" name="montantTotal" value="<?php echo htmlspecialchars($m); ?>" id="montantTotal" required>                            </div>
+                                 <div class="form-group">
+                                <label for="etat">Statut de la facture :</label>
+                                <select id="etat" class="form-control" name="etat">
+                                        <option value="Payée">Payée</option>
+                                        <option value="Impayée">Impayée</option>
+                                        <option value="Partiellement payée">Partiellement payée</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+        <label for="idC">Id Client</label>
+        <select class="form-control" name="idC" id="idC">
+            <?php foreach ($clients as $client): ?>
+                <option value="<?php echo htmlspecialchars($client['idClient']); ?>">
+                    <?php echo htmlspecialchars($client['idClient']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
                             <div class="form-group">
                                 <label for="idPaiement">IdPaiement</label>
-                                <input type="text" class="form-control" name="idP" id="idPaiement" required>
-                            </div>
+                                <input type="number" class="form-control" name="idP" placeholder="ex: 15" value= "<?php echo htmlspecialchars($iP); ?>" id="idPaiement" required>
+</div>
+                            <script>
+                                document.getElementById('etat').addEventListener('change', function() {
+                                    var etatValue = this.value;
+                                    var idPaiementField = document.getElementById('idPaiement');
+                                    var montantTotalField = document.getElementById('montantTotal');
+                                    
+                                    if (etatValue === 'Impayée') {
+                                        idPaiementField.value = '0';
+                                        idPaiementField.readOnly = true;
+                                        montantTotalField.value = '0';
+                                        montantTotalField.readOnly = true;
+                                    } else {
+                                        idPaiementField.value = '';
+                                        idPaiementField.readOnly = false;
+                                        montantTotalField.value = '';
+                                        montantTotalField.readOnly = false; // Clear the value if other options are selected
+                                    }
+                                });
+                            </script>
+                         
                             
-                            <button type="submit" class="btn btn-primary btn-user btn-block">Modifier</button>
+                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Modifier</button>
                         </form>
 
                         <hr>

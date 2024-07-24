@@ -47,28 +47,30 @@
                 <div class="col-lg-6">
                     <div class="p-5">
                         <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Ajouter Client</h1>
+                            <h1 class="h4 text-gray-900 mb-4">Ajouter Paiement</h1>
                         </div>
-                        <form action="storeClient.php" method="post" class="user">
+                        <form action="storePaiement.php" method="post" class="user">
                             <div class="form-group">
-                                <label for="nom">Nom du client</label>
-                              <input type="text" class="form-control" name="nom" id="nom">                            </div> 
+                                <label for="dateP">Date du paiement</label>
+                              <input type="date" class="form-control" name="dateP" id="nom">                            </div> 
                             <div class="form-group">
-                                 <label for="adresse">Adresse</label>
-                                 <input type="text" class="form-control" name="adresse" id="adresse" placeholder="123 Rue Exemple, Ville, Code Postal">                            </div>
-                            <div class="form-group"> 
-                                <label for="email">E-mail</label>
-                                <input type="email" class="form-control" aria-describedby="emailHelp" name="email" id="email">                            </div>     
-                            <div class="form-group">
-                                    <label for="tel">Numéro de télephone</label>
-                                    <input type="tel" name="tel" class="form-control" pattern="\+[0-9]{1,3}[0-9]{4,14}" placeholder="+33 123 456 789" required>
-                            </div>
+                                 <label for="montant">Montant</label>
+                                 <input type="number" step ="0.001" placeholder="ex: 15.756" class="form-control" name="montant" id="adresse">                            </div>
+                                 <div class="form-group">
+                                <label for="methode">Méthode du paiement</label>
+                                <select id="methode" class="form-control" name="methode">
+                                        <option value="Virement">Virement</option>
+                                        <option value="Chèque">Chèque</option>
+                                        <option value="Carte bancaire">Carte bancaire</option>
+                                    </select>
+                                </div>  
+                            
                         
                             
-                            <button type="submit" class="btn btn-primary btn-user btn-block text-uppercase" >Ajouter</button>
+                            <button type="submit" class="btn btn-primary btn-user btn-block   text-uppercase">Ajouter</button>
                         </form>
                         <hr>
-                        <a href="view/clientLayout.php" class="btn btn-primary btn-user btn-block ">Retour</a>
+                        <a href="view/paiementLayout.php" class="btn btn-primary btn-user btn-block">Retour</a>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,7 @@
     <title>Dashboard</title>
 
     <!-- Custom fonts for this template-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
@@ -19,6 +20,36 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.css" />
+
+
+  
+    <style>
+        @keyframes example {
+            0% {transform: translateX(0);}
+            50% {transform: translateX(100px);}
+            100% {transform: translateX(0);}
+        }
+        @keyframes example1 {
+            0% {transform: translateX(0);}
+            50% {transform: translateX(-50px);}
+            100% {transform: translateX(0);}
+        }
+       
+        .animated-image {
+            animation: example1 3s infinite;
+        }
+        th {
+  background-color: #04AA6D;
+  color: white;
+}
+td{
+    text-align: left;
+}
+td:nth-child(even) {background-color: #f2f2f2;}
+
+    </style>
+
 
 </head>
 
@@ -28,6 +59,7 @@
 // At the top of the file, add:
 require_once __DIR__.'/../model/facture.php';
 require_once __DIR__.'/../model/utilisateur.php';
+require_once __DIR__.'/../model/client.php';
 $listeFacture = listeFacture();
 
 // Ensure user is logged in
@@ -48,15 +80,14 @@ $nom = $utilisateur->getNom();
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                <img src="../img/logo.png" width="60" height="70" alt="Logo">                </div>
-                <div class="sidebar-brand-text  "style="font-size: 15px" >Gestion des factures </div>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="userLayout.php">
+                <div class="sidebar-brand-icon ">
+                <img src="../img/facture.png"  class="animated-image image-fluid" width="60" height="60" alt="Logo">                </div>
             </a>
 
            
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link" href="userLayout.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
@@ -77,10 +108,10 @@ $nom = $utilisateur->getNom();
         
 
             <!-- Nav Item - Factures -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="layout.php">
                     <i class="fas fa-fw fa-table"></i>
-                    <b><span>Table des factures</span></b></a>
+                    <span>Table des factures</span></a>
             </li>
 
             <!-- Nav Item - Clients -->
@@ -91,7 +122,7 @@ $nom = $utilisateur->getNom();
             </li>
             <!-- Nav Item - Paiements -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="paiementlayout.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Table des paiements</span></a>
             </li>
@@ -106,7 +137,6 @@ $nom = $utilisateur->getNom();
 
             <!-- Sidebar Message -->
             <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-7" width="70" height="400" src="../img/logo.png" alt="...">
                 <p class="text-center mb-2"> Know more about <strong>SQLI</strong> </p>
                 <a class="btn btn-success btn-sm" href="https://www.sqli.com/ma-fr/agences/oujda">Learn more</a>
             </div>
@@ -131,19 +161,7 @@ $nom = $utilisateur->getNom();
                         </button>
                     </form>
 
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                   
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -221,20 +239,22 @@ $nom = $utilisateur->getNom();
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <a  href="../facture1.php"> <button  class="btn btn-primary">Ajouter une facture</button></a>
+                            <a href="clientLayout.php"  class="btn btn-success">Liste des clients</a>
+                            <a href="paiementLayout.php" class="btn btn-warning">Liste des paiements</a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table  class="table" id="dataTable"  width="100%" cellspacing="1">
                                 
         <thead>
             <tr>
-                <th scope="col">numero</th>  
-                <th scope="col">date</th>
-                <th scope="col">montantTotal</th>
-                <th scope="col">etat</th>
-                <th scope="col">idClient</th>
-                <th scope="col">idPaiement</th>
-                
+                <th style=" width: 5px;" scope="col">Numero</th>  
+                <th scope="col" style="width: 140px;">Date </th>
+                <th scope="col" width="180px;">Montant Total</th>
+                <th style="width: 180px;" scope="col">Etat</th>
+                <th scope="col" width="120px;">Id Client</th>
+                <th scope="col" width="120px;">Id Paiement</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -244,20 +264,139 @@ $nom = $utilisateur->getNom();
         $i=1; 
         foreach($listeFacture as $facture): ?>    
             <tr>
-               
+                  <?php 
+                require_once __DIR__.'/../model/client.php';
+                require_once __DIR__.'/../model/paiement.php';
+                $idClient=$facture->idC;
+                $idPaiement=$facture->idP;
+                $paiement=new paiement("","","");
+                 $client=new client("","","","","");
+                 $client=$client->loadClientById($idClient);
+                 $paiement=$paiement->loadPaiementById($idPaiement);
+                  ?>
                 <td><?= $i ?></td>
                 <td><?= $facture->date ?></td>
-                <td><?= $facture->montantTotal ?></td>
-                <td><?= $facture->etat ?></td>
-                <td><?= $facture->idC ?></td>
-                <td><?= $facture->idP ?></td>
+                <td><?= $facture->montantTotal ?> DH</td>
+                <td><?= $facture->etat?></td>
+                <td>                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#infoClient<?php echo $idClient ?>" id="submit"><?= $facture->idC ?></button>
+                </td>
+                <td>                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#infoPaiement<?php echo $idPaiement ?>" id="submit"><?= $facture->idP ?></button>
+                </td>
+             
+              
                 
-                <td><button><a href="../modifFact.php?numero=<?= $facture->numero ?>&id=<?= $i ?>" action="../modifFact.php" method="get">Edit</a></button>
-                <button><a href="../suppFact.php?num=<?= $facture->numero ?>" action="../suppFact.php" method="get">Delete</a></button>
-                <button><a href= >Détails Paiement</a></button>
-                <button><a href="clientLayout.php" >Détails Client</a></button></td>
-            </tr>
-            <?php $i++ ;?>
+                <td width="220px;" ><a href="../modifFact.php?numero=<?= $facture->numero ?>&id=<?= $i ?>" class="btn btn-info" action="../modifFact.php" method="get">Modifier</a>
+                <a href="../suppFact.php?num=<?= $facture->numero ?>" class="btn btn-danger" action="../suppFact.php" method="get">Supprimer</a>
+                
+                
+            </tr>              <!-- ClientModal -->
+                <div class="modal fade" id="infoClient<?= $idClient?>" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="infoModalLabel">Informations Client</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    
+                        <!-- Your card content goes here -->
+                        <div class="card">
+                        <div class="card-body">
+                        <div class="card shadow-sm">
+                            <div class="card-text">
+                            <?php $client = listeClientByID($idClient); ?>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">ID:</span>
+                                <span ><?= $client->idClient ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Name:</span>
+                                <span><?= $client->nom ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Address:</span>
+                                <span><?= $client->adresse ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Email:</span>
+                                <span><?= $client->email ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Téléphone:</span>
+                                <span><?= $client->telephone ?></span>
+                                </li>
+                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="../modifClient.php?num=<?= $client->idClient ?>&id=<?= $i ?>"  action="../modifClient.php" method="get" class="btn btn-primary">Modifier</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+                <div class="modal fade" id="infoPaiement<?= $idPaiement?>" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="infoModalLabel">Informations Paiement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    
+                        <!-- Your card content goes here -->
+                        <div class="card">
+                        <div class="card-body">
+                        <div class="card shadow-sm">
+                            <div class="card-text">
+                            <?php $paiement = listePaiementByID($idPaiement); ?>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">ID:</span>
+                                <span ><?= $paiement->idPaiement ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Date du paiement</span>
+                                <span><?= $paiement->dateP ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Montant</span>
+                                <span><?= $paiement->montant ?></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Méthode</span>
+                                <span><?= $paiement->methode ?></span>
+                                </li>
+                              
+                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="../modifPaiement.php?number=<?= $paiement->idPaiement ?>&id=<?= $i ?>"  action="../modifPaiement.php" method="get" class="btn btn-primary">Modifier</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <?php $i++ ;
+            
+            ?>
+              
         <?php endforeach ?>
         </tbody>
     </table>
@@ -311,9 +450,37 @@ $nom = $utilisateur->getNom();
             </div>
         </div>
     </div>
+   
 
+    <!-- PaiementModal -->
+    <div class="modal fade" id="infoPaiement" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoModalLabel">Information Card</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Your card content goes here -->
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Card Title</h5>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
@@ -328,6 +495,10 @@ $nom = $utilisateur->getNom();
 
     <!-- Page level custom scripts -->
     <script src="../js/demo/datatables-demo.js"></script>
+    <script src="https://cdn.datatables.net/2.1.0/js/dataTables.js"></script>
+   
+
+
 
 </body>
 

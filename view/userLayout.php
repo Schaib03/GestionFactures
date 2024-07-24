@@ -19,6 +19,24 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @keyframes example {
+            0% {transform: translateX(0);}
+            50% {transform: translateX(100px);}
+            100% {transform: translateX(0);}
+        }
+        @keyframes example1 {
+            0% {transform: translateX(0);}
+            50% {transform: translateX(-50px);}
+            100% {transform: translateX(0);}
+        }
+             .animated-image {
+            animation: example1 2s infinite;
+        }
+
+    </style>
 
 </head>
 
@@ -47,10 +65,9 @@ $nom = $utilisateur->getNom();
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                <img src="../img/logo.png" width="60" height="70" alt="Logo">                </div>
-                <div class="sidebar-brand-text " style="font-size: 15px" >Gestion des factures </div>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="userLayout.php">
+                <div class="sidebar-brand-icon ">
+                <img src="../img/logo.png"  class="animated-image image-fluid" width="120" height="120" alt="Logo">                </div>
             </a>
 
            
@@ -104,9 +121,8 @@ $nom = $utilisateur->getNom();
             </div>
 
             <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-7" width="70" height="400" src="../img/logo.png" alt="...">
-                <p class="text-center mb-2"> Know more about <strong>SQLI</strong> </p>
+            <div class="sidebar-card mb-4 d-lg-flex">
+                <p class="text-center mb-4"> Know more about <strong>SQLI</strong> </p>
                 <a class="btn btn-success btn-sm" href="https://www.sqli.com/ma-fr/agences/oujda">Learn more</a>
             </div>
 
@@ -128,19 +144,7 @@ $nom = $utilisateur->getNom();
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
+                    
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -183,78 +187,207 @@ $nom = $utilisateur->getNom();
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                    <button class="btn btn-warning" style="font-size: 25px;" type="button" disabled>
+                    <span class="spinner-grow " role="status" aria-hidden="true"></span>
+                    <span class="visually-hidden "  >Dashboard</span>
+                    </button>
+                     
                     </div>
 
                     <!-- Content Row -->
                     <div class="row">
-
-                        <!-- Earnings (Monthly) Card Example -->
+                        <?php
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT COUNT(numero) AS paid_count FROM factures WHERE etat = :etat AND idU= :idU");
+                        $idU = $_SESSION['id'];
+                        $etat = "Payée";
+                        $req->bindValue(':etat', $etat, PDO::PARAM_STR);
+                        $req->bindValue(':idU', $idU, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $paidCount = $res['paid_count'];
+                        echo"<script> var paidCount = $paidCount;</script>";
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT COUNT(idPaiement) AS paid_count FROM paiement WHERE idUser= :idUser");
+                        $idUser = $_SESSION['id'];
+                        $req->bindValue(':idUser', $idUser, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $paid_count = $res['paid_count'];
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                        ?>
+                        <!-- Factures Card  -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                                Nombre de paiements effectués</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $paid_count ?></div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        <i class="fas fa-regular fa-file-circle-check fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
+                        <?php
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT COUNT(numero) AS impaid_count FROM factures WHERE etat = :etat  AND idU = :idU");
+                        $idU = $_SESSION['id'];
+                        $etat = "Impayée";
+                        $req->bindValue(':etat', $etat, PDO::PARAM_STR);
+                        $req->bindValue(':idU', $idU, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $impaidCount = $res['impaid_count'];
+                        echo"<script> var impaidCount = $impaidCount;</script>";
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT COUNT(numero) AS factCount FROM factures WHERE idU = :idU");
+                        $idU = $_SESSION['id'];
+                        $req->bindValue(':idU', $idU, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $factCount = $res['factCount'];
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                        ?>
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                                Nombre de factures</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $factCount ?></div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
+                                        <i class="fa-solid  fa-2x text-gray-300 fa-file-invoice-dollar"></i>                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        <?php
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT COUNT(numero) AS Partipaid_count FROM factures WHERE etat = :etat");
+                        $etat = "Partiellement payée";
+                        $req->bindValue(':etat', $etat, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $PartipaidCount = $res['Partipaid_count'];
+                        echo "<script> var PartipaidCount = $PartipaidCount;</script>";
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT SUM(montant) AS somme FROM paiement WHERE idUser = :idUser ");
+                        $idU = $_SESSION['id'];
+                        $req->bindValue(':idUser', $idU, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $somme = $res['somme'];
+                        
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                        ?>
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-info shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total des gains
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"></div>
                                                 </div>
                                                 <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $somme ?> DH</div>
+
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                            <i class="fas fa-regular fa-dollar-sign fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <?php
+                       try {
+                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                        ]);
+                        
+                        $req = $pdo->prepare("SELECT COUNT(idClient) AS clientsCount FROM client where idUser = :idUser");
+                        $iduser = $_SESSION['id'];
+                        $req->bindValue(':idUser', $iduser, PDO::PARAM_STR);
+                        $req->execute();
+                        
+                        $res = $req->fetch();
+                        $clientsCount = $res['clientsCount'];
+                        
+                    } catch (PDOException $e) {
+                        echo "Database error: " . $e->getMessage();
+                    }
+                        ?>
 
                         <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -263,11 +396,11 @@ $nom = $utilisateur->getNom();
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Nombre de clients</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $clientsCount ?></div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                            <i class="fa-solid fa-user fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -285,27 +418,28 @@ $nom = $utilisateur->getNom();
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
+                                    <h6 class="m-0 font-weight-bold text-primary">Feedback</h6>
+                                    
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
+                                <div class="card-body text-center">
+                        <img src="../img/logo.png" alt="Profile Picture" class="animated-image" width="100" height="100">
+                        <h5 class="card-title">CHAIB Saad</h5>
+                        <p class="card-text">We need your feedback</p>
+                        <a href="mailto:saadchaib03@gmail.com" class="btn btn-danger mb-2">
+                            <i class="fas fa-envelope"></i> Gmail
+                        </a>
+                        <a href="https://www.facebook.com/" class="btn btn-primary mb-2">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </a>
+                        <a href="https://www.github.com/Schaib03" class="btn btn-info mb-2">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                        <a href="https://www.linkedin.com/in/saad-chaib-0916831b0/" class="btn btn-secondary mb-2">
+                            <i class="fab fa-linkedin-in"></i> LinkedIn
+                        </a>
+                    </div>
                                 </div>
                             </div>
                         </div>
@@ -317,201 +451,19 @@ $nom = $utilisateur->getNom();
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
+                                        <canvas id="myChart" height="300"></canvas>
+                                    
+                                   
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Project Card Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="small font-weight-bold">Server Migration <span
-                                            class="float-right">20%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
-                                            aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Sales Tracking <span
-                                            class="float-right">40%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
-                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Customer Database <span
-                                            class="float-right">60%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar" role="progressbar" style="width: 60%"
-                                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Payout Details <span
-                                            class="float-right">80%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Account Setup <span
-                                            class="float-right">Complete!</span></h4>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Color System -->
-                            <div class="row">
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-primary text-white shadow">
-                                        <div class="card-body">
-                                            Primary
-                                            <div class="text-white-50 small">#4e73df</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-success text-white shadow">
-                                        <div class="card-body">
-                                            Success
-                                            <div class="text-white-50 small">#1cc88a</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-info text-white shadow">
-                                        <div class="card-body">
-                                            Info
-                                            <div class="text-white-50 small">#36b9cc</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-warning text-white shadow">
-                                        <div class="card-body">
-                                            Warning
-                                            <div class="text-white-50 small">#f6c23e</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-danger text-white shadow">
-                                        <div class="card-body">
-                                            Danger
-                                            <div class="text-white-50 small">#e74a3b</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-secondary text-white shadow">
-                                        <div class="card-body">
-                                            Secondary
-                                            <div class="text-white-50 small">#858796</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-light text-black shadow">
-                                        <div class="card-body">
-                                            Light
-                                            <div class="text-black-50 small">#f8f9fc</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-dark text-white shadow">
-                                        <div class="card-body">
-                                            Dark
-                                            <div class="text-white-50 small">#5a5c69</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Illustrations -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
-                                            src="../img/undraw_posting_photo.svg" alt="...">
-                                    </div>
-                                    <p>Add some quality, svg illustrations to your project courtesy of <a
-                                            target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a
-                                        constantly updated collection of beautiful svg images that you can use
-                                        completely free and without attribution!</p>
-                                    <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on
-                                        unDraw &rarr;</a>
-                                </div>
-                            </div>
-
-                            <!-- Approach -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
-                                </div>
-                                <div class="card-body">
-                                    <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce
-                                        CSS bloat and poor page performance. Custom CSS classes are used to create
-                                        custom components and custom utility classes.</p>
-                                    <p class="mb-0">Before working with this theme, you should become familiar with the
-                                        Bootstrap framework, especially the utility classes.</p>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
-
+                   
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
@@ -569,6 +521,31 @@ $nom = $utilisateur->getNom();
     <!-- Page level custom scripts -->
     <script src="../js/demo/chart-area-demo.js"></script>
     <script src="../js/demo/chart-pie-demo.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script>
+var xValues = ["Factures payées", "Factures impayées", "Factures partiellement payées"];
+var yValues = [paidCount,impaidCount, PartipaidCount];
+var barColors = [
+  "#4e73df",
+  "#1cc88a",
+  "#36b9cc",
+ 
+];
+
+new Chart("myChart", {
+  type: "doughnut",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    
+  }
+});
+</script>
 
 </body>
 

@@ -29,8 +29,7 @@
         @keyframes example1 {
             0% {transform: translateX(0);}
             50% {transform: translateX(-50px);}
-            100% {transform: translateX(0);}
-        }
+            100% {transform: translateX(0);}}
         
         .animated-image {
             animation: example1 3s infinite;
@@ -53,7 +52,7 @@ th {
 <?php
 // At the top of the file, add:
 session_start();
-require_once __DIR__.'/../model/client.php';
+require_once __DIR__.'/../model/paiement.php';
 require_once __DIR__.'/../model/utilisateur.php';
 
 // Ensure user is logged in
@@ -62,7 +61,7 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-$listeClient = listeClient();
+$listePaiement = listePaiement();
 $utilisateur = new utilisateur("", "", "");
 $idU = $_SESSION['id'];
 $utilisateur = $utilisateur->selectById($idU);
@@ -77,7 +76,7 @@ $nom = $utilisateur->getNom();
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="userLayout.php">
                 <div class="sidebar-brand-icon ">
-                <img src="../img/client.png"  class="animated-image image-fluid" width="70" height="70" alt="Logo">                </div>
+                <img src="../img/dollar.png"  class="animated-image image-fluid" width="60" height="60" alt="Logo">                </div>
             </a>
 
            
@@ -110,14 +109,14 @@ $nom = $utilisateur->getNom();
             </li>
 
             <!-- Nav Item - Clients -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="clientlayout.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Table des clients</span></a>
             </li>
             <!-- Nav Item - Paiements -->
-            <li class="nav-item">
-                <a class="nav-link" href="paiementlayout.php">
+            <li class="nav-item active">
+                <a class="nav-link" href="tables.html">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Table des paiements</span></a>
             </li>
@@ -156,7 +155,8 @@ $nom = $utilisateur->getNom();
                         </button>
                     </form>
 
-                  
+                   
+
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -225,14 +225,14 @@ $nom = $utilisateur->getNom();
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Table des clients</h1>
+                    <h1 class="h3 mb-2 text-gray-800">Table des paiements</h1>
                    
                     <!-- DataTales Example -->
                    
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <a  href="../client1.php"> <button  class="btn btn-primary">Ajouter un client</button></a>
+                            <a  href="../paiement1.php"> <button  class="btn btn-primary">Ajouter un paiement</button></a>
                             <a href="layout.php"  class="btn btn-success">Liste des factures</a>
 
 
@@ -243,12 +243,11 @@ $nom = $utilisateur->getNom();
                                 
                                     <thead>
                                         <tr>
-                                            <th scope="col">Numéro Client</th>  
-                                            <th scope="col">Id Client</th>
-                                            <th scope="col">Nom</th>
-                                            <th scope="col">Adresse</th>
-                                            <th scope="col">E-mail</th>
-                                            <th scope="col">Téléphone</th>
+                                            <th scope="col">Numéro Paiement</th>  
+                                            <th scope="col">Id paiement</th>
+                                            <th scope="col">Date du paiement</th>
+                                            <th scope="col">Montant</th>
+                                            <th scope="col">Méthode</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -258,17 +257,16 @@ $nom = $utilisateur->getNom();
                                     <?php 
                                 
                                     $i=1; 
-                                    foreach($listeClient as $client): ?>    
+                                    foreach($listePaiement as $paiement): ?>    
                                         <tr>
                                         
                                             <td><?= $i ?></td>
-                                            <td><?= $client->idClient ?></td>
-                                            <td><?= $client->nom ?></td>
-                                            <td><?= $client->adresse ?></td>
-                                            <td><?= $client->email ?></td>
-                                            <td><?= $client->telephone ?></td>
-                                            <td><a href="../modifClient.php?num=<?= $client->idClient ?>&id=<?= $i ?>"  class="btn btn-info" action="../modifClient.php" method="get">Modifier</a>
-                                            <a href="../suppClient.php?num=<?= $client->idClient ?>" class="btn btn-danger" action="../suppClient.php" method="get">Delete</a>
+                                            <td><?= $paiement->idPaiement ?></td>
+                                            <td><?= $paiement->dateP ?></td>
+                                            <td><?= $paiement->montant ?> DH</td>
+                                            <td><?= $paiement->methode ?></td>
+                                            <td><a href="../modifPaiement.php?number=<?= $paiement->idPaiement ?>&id=<?= $i ?>"  class="btn btn-info" action="../modifPaiement.php" method="get">Modifier</a>
+                                            <a href="../suppPaiement.php?number=<?= $paiement->idPaiement ?>" class="btn btn-danger" action="../suppPaiement.php" method="get">Supprimer</a>
                                         </tr>
                                         <?php $i++ ;?>
                                     <?php endforeach ?>

@@ -8,7 +8,7 @@
     }
     else
     {
-        echo "user not found";
+        header('location: index.php');
     }
     
     

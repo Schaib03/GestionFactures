@@ -14,6 +14,9 @@ class Facture {
         if(isset($_SESSION['login'])) {
              $this->idU = $_SESSION['id'];
     } else {
+        session_start();
+        if(isset($_SESSION['login'])) {
+            $this->idU = $_SESSION['id'];}
         echo "You are not logged i wown.";
     }
     }
@@ -57,11 +60,10 @@ class Facture {
         $query = "INSERT INTO factures (date, montantTotal, etat, idC, idP, idU) VALUES (:date, :montantTotal, :etat, :idC, :idP, :idU)";
         $stmt = $pdo->prepare($query);
         $currentDateTime = (new DateTime())->format('Y-m-d');
-        $state="En cours";
         // Binding parameters
         $stmt->bindParam(':date', $currentDateTime);
         $stmt->bindParam(':montantTotal', $this->montantTotal);
-        $stmt->bindParam(':etat', $state);
+        $stmt->bindParam(':etat', htmlspecialchars(($this->etat)));
         $stmt->bindParam(':idC', $this->idC);
         $stmt->bindParam(':idP', $this->idP);
         $stmt->bindParam(':idU', $this->idU);
