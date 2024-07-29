@@ -1,3 +1,20 @@
+<?php 
+require_once 'model/client.php';
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+}
+if (isset($_GET['num'])) {
+    $num = $_GET['num'];
+}
+$client=new client(0,0,0,0,0);  
+if($client->loadClientById($num)) {
+   $no=$client->getNom();
+   $ad=$client->getAdresse();
+   $em=$client->getEmail();
+   $te=$client->getTelephone();
+
+ }
+?>
 
 
 <!DOCTYPE html>
@@ -34,22 +51,6 @@
 </style>
 
 </head>
-<?php require_once 'model/client.php';
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-}
-if (isset($_GET['num'])) {
-    $num = $_GET['num'];
-}
-$client=new client(0,0,0,0,0);  
-if($client->loadClientById($num)) {
-   $no=$client->getNom();
-   $ad=$client->getAdresse();
-   $em=$client->getEmail();
-   $te=$client->getTelephone();
-
- }
-?>
 <div class="row justify-content-center">
 
 <div class="col-xl-10 col-lg-12 col-md-9">
@@ -83,11 +84,11 @@ if($client->loadClientById($num)) {
                                 <input type="email" class="form-control" aria-describedby="emailHelp" name="email" id="email" value = "<?php echo htmlspecialchars($em); ?>">                            </div>     
                             <div class="form-group">
                                     <label for="tel">Téléphone</label>
-                                    <input type="tel" name="tel" class="form-control" pattern="\+[0-9]{1,3}[0-9]{4,14}" value = "<?php echo htmlspecialchars($te); ?>" required>
+                                    <input type="tel" name="tel" class="form-control"  value = "<?php echo htmlspecialchars($te); ?>" required>
                             </div>
                         
                             
-                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Ajouter</button>
+                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Confirmer modification</button>
                         </form>
                         <hr>
                         <a href="view/clientLayout.php" class="btn btn-primary btn-user btn-block">Retour</a>

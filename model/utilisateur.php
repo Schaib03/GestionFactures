@@ -22,12 +22,9 @@ class utilisateur{
         $this->login = $login;
         $this->password = $password;
     }
-    public function seConnecter($login, $password) {
-
-    }
     public function ajouterUtilisateur() {
         $pdo = dbU_connect();
-        $query = "INSERT INTO Utilisateur (nom,login,password) VALUES (:nom, :login, :password)";
+        $query = "INSERT INTO utilisateur (nom,login,password) VALUES (:nom, :login, :password)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':nom', $this->nom);
         $stmt->bindParam(':login', $this->login);
@@ -50,7 +47,8 @@ class utilisateur{
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return true;
         } else {
-            echo "Error identifying user";
+            header('Location: ../indexOubli.php');
+            echo '<alert>Identifiant ou mot de passe incorrect</alert>';
             return false;
         }
     }
@@ -70,25 +68,26 @@ class utilisateur{
         }
         return null;
     }
-    public function modifierUtilisateur($nom, $login, $password) {
-
-    }
-    public function supprimerUtilisateur() {
-
-    }
-    public function rechercherFactureParNumero($numero) {
-
-    }
-    public function rechercherFactureParClient($idC) {
-
-    }
-    public function rechercherFactureParPaiement($idP) {
-        
-    }
 
 }
 function dbU_connect(){
-    return new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
-}
+    $host = 'db';
+    $db   = 'appwebfactures';
+    $user = 'appuser';
+    $pass = 'apppassword';
+    $charset = 'utf8mb4';
+
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ];
+
+    try {
+        return new PDO($dsn, $user, $pass, $options);
+    } catch (\PDOException $e) {
+        throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    }}
 
 ?>

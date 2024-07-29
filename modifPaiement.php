@@ -1,3 +1,19 @@
+<?php 
+require_once 'model/paiement.php';
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+}
+if (isset($_GET['number'])) {
+    $num = $_GET['number'];
+}
+$paiement=new Paiement(0,0,0);  
+if($paiement->loadPaiementById($num)) {
+   $no=$paiement->getDateP();
+   $ad=$paiement->getMontant();
+   $em=$paiement->getMethode();
+
+ }
+?>
 
 
 <!DOCTYPE html>
@@ -11,7 +27,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login</title>
+    <title>Modifier paiement</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -34,21 +50,6 @@
 </style>
 
 </head>
-<?php require_once 'model/paiement.php';
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-}
-if (isset($_GET['number'])) {
-    $num = $_GET['number'];
-}
-$paiement=new Paiement(0,0,0);  
-if($paiement->loadPaiementById($num)) {
-   $no=$paiement->getDateP();
-   $ad=$paiement->getMontant();
-   $em=$paiement->getMethode();
-
- }
-?>
 <div class="row justify-content-center">
 
 <div class="col-xl-10 col-lg-12 col-md-9">
@@ -78,12 +79,12 @@ if($paiement->loadPaiementById($num)) {
                         </div>
                             <div class="form-group">
                                 <label for="dateP">Date du paiement</label>
-                              <input type="date" class="form-control" name="dateP" id="dateP">                            </div> 
+                              <input type="date" class="form-control" name="dateP" id="dateP" required>                            </div> 
                             <div class="form-group">
                                  <label for="montant">Montant</label>
-                                 <input type="number" step="0.001" placeholder="15.756" class="form-control" name="montant" id="montant">                            </div>
+                                 <input type="number" step="0.001" placeholder="15.756" class="form-control" name="montant" id="montant" required>                            </div>
                                  <div class="form-group">
-                                <label for="methode">Méthode du paiement</label>
+                                <label for="methode">Méthode du paiement</label required>
                                 <select id="methode" class="form-control" name="methode">
                                         <option value="Virement">Virement</option>
                                         <option value="Chèque">Chèque</option>
@@ -93,7 +94,7 @@ if($paiement->loadPaiementById($num)) {
                            
                         
                             
-                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Ajouter</button>
+                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Confirmer modification</button>
                         </form>
                         <hr>
                         <a href="view/PaiementLayout.php" class="btn btn-primary btn-user btn-block">Retour</a>

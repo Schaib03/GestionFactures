@@ -1,3 +1,20 @@
+<?php 
+require_once 'model/facture.php';
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+}
+if (isset($_GET['numero'])) {
+    $num = $_GET['numero'];
+}
+$fac=new facture(0,0,0,0,0,0,0);  
+if($fac->loadFactureByNumero($num)) {
+   $d=$fac->getDate();
+   $m=$fac->getMontantTotal();
+   $e=$fac->getEtat();
+   $iC=$fac->getIdC();
+   $iP=$fac->getIdP();
+ }
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -33,22 +50,6 @@
 </style>
 
 </head>
-<?php require_once 'model/facture.php';
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-}
-if (isset($_GET['numero'])) {
-    $num = $_GET['numero'];
-}
-$fac=new facture(0,0,0,0,0,0,0);  
-if($fac->loadFactureByNumero($num)) {
-   $d=$fac->getDate();
-   $m=$fac->getMontantTotal();
-   $e=$fac->getEtat();
-   $iC=$fac->getIdC();
-   $iP=$fac->getIdP();
- }
-?>
 
 <div class="row justify-content-center">
 
@@ -66,7 +67,7 @@ if($fac->loadFactureByNumero($num)) {
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Modifier Facture</h1>
                         </div>
-                                                <?php
+<?php
                                                 try {
                             // Connexion à la base de données
                             $pdo=new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
@@ -85,7 +86,25 @@ if($fac->loadFactureByNumero($num)) {
                         } catch (PDOException $e) {
                             echo 'Erreur : ' . $e->getMessage();
                         }
-                        ?>
+?>
+<?php
+try {
+    // Connexion à la base de données
+    $pdp=dbP_connect();
+    $pdp->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Préparation et exécution de la requête pour obtenir les idClient
+    $query = 'SELECT idPaiement FROM paiement where idUser = :idUser';
+    $stmtp = $pdp->prepare($query);
+    $stmtp->bindParam(':idUser', $id, PDO::PARAM_INT);
+    $stmtp->execute();
+
+    // Récupération des résultats
+    $paiements = $stmtp->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo 'Erreur : ' . $e->getMessage();
+}
+?>
 
                         <form action="editfact.php" method="post" class="user">
                         <div class="form-group" style="display: none;">
@@ -120,10 +139,16 @@ if($fac->loadFactureByNumero($num)) {
             <?php endforeach; ?>
         </select>
     </div>
-                            <div class="form-group">
-                                <label for="idPaiement">IdPaiement</label>
-                                <input type="number" class="form-control" name="idP" placeholder="ex: 15" value= "<?php echo htmlspecialchars($iP); ?>" id="idPaiement" required>
-</div>
+    <div class="form-group">
+        <label for="idC">Id Paiement</label>
+        <select class="form-control" name="idP" id="idP">
+            <?php foreach ($paiements as $paiement): ?>
+                <option value="<?php echo htmlspecialchars($paiement['idPaiement']); ?>">
+                    <?php echo htmlspecialchars($paiement['idPaiement']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
                             <script>
                                 document.getElementById('etat').addEventListener('change', function() {
                                     var etatValue = this.value;
@@ -145,7 +170,7 @@ if($fac->loadFactureByNumero($num)) {
                             </script>
                          
                             
-                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Modifier</button>
+                            <button type="submit" class="btn btn-primary btn-user btn-block  text-uppercase">Confirmer Modification</button>
                         </form>
 
                         <hr>

@@ -1,3 +1,21 @@
+<?php
+// At the top of the file, add:
+session_start();
+require_once __DIR__.'/../model/paiement.php';
+require_once __DIR__.'/../model/utilisateur.php';
+
+// Ensure user is logged in
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$listePaiement = listePaiement();
+$utilisateur = new utilisateur("", "", "");
+$idU = $_SESSION['id'];
+$utilisateur = $utilisateur->selectById($idU);
+$nom = $utilisateur->getNom();
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +28,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dashboard</title>
+    <title>Table des paiements</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -49,24 +67,6 @@ th {
 </head>
 
 <body id="page-top">
-<?php
-// At the top of the file, add:
-session_start();
-require_once __DIR__.'/../model/paiement.php';
-require_once __DIR__.'/../model/utilisateur.php';
-
-// Ensure user is logged in
-if (!isset($_SESSION['id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$listePaiement = listePaiement();
-$utilisateur = new utilisateur("", "", "");
-$idU = $_SESSION['id'];
-$utilisateur = $utilisateur->selectById($idU);
-$nom = $utilisateur->getNom();
-?>
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -116,7 +116,7 @@ $nom = $utilisateur->getNom();
             </li>
             <!-- Nav Item - Paiements -->
             <li class="nav-item active">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="paiementLayout.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Table des paiements</span></a>
             </li>
@@ -286,7 +286,7 @@ $nom = $utilisateur->getNom();
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; CHAIB Saad & Sqli 2024</span>
                     </div>
                 </div>
             </footer>

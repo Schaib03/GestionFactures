@@ -1,3 +1,31 @@
+<?php
+// Start the session at the very beginning
+
+
+// Require necessary files
+require_once __DIR__.'/../model/utilisateur.php';
+session_start();
+// Ensure user is logged in
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Create an instance of utilisateur and fetch user data
+$utilisateur = new utilisateur("", "", "");
+$idU = $_SESSION['id'];
+
+// Assuming selectById returns an utilisateur object or null
+$utilisateur = $utilisateur->selectById($idU);
+
+if ($utilisateur) {
+    $nom = $utilisateur->getNom();
+} else {
+    // Handle case where user is not found
+    echo "User not found.";
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,28 +63,12 @@
              .animated-image {
             animation: example1 2s infinite;
         }
-
+        
     </style>
 
 </head>
 
 <body id="page-top">
-<?php
-// At the top of the file, add:
-session_start();
-require_once __DIR__.'/../model/utilisateur.php';
-
-// Ensure user is logged in
-if (!isset($_SESSION['id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$utilisateur = new utilisateur("", "", "");
-$idU = $_SESSION['id'];
-$utilisateur = $utilisateur->selectById($idU);
-$nom = $utilisateur->getNom();
-?>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -198,10 +210,7 @@ $nom = $utilisateur->getNom();
                     <div class="row">
                         <?php
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT COUNT(numero) AS paid_count FROM factures WHERE etat = :etat AND idU= :idU");
                         $idU = $_SESSION['id'];
@@ -218,10 +227,7 @@ $nom = $utilisateur->getNom();
                         echo "Database error: " . $e->getMessage();
                     }
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT COUNT(idPaiement) AS paid_count FROM paiement WHERE idUser= :idUser");
                         $idUser = $_SESSION['id'];
@@ -254,10 +260,7 @@ $nom = $utilisateur->getNom();
                         </div>
                         <?php
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT COUNT(numero) AS impaid_count FROM factures WHERE etat = :etat  AND idU = :idU");
                         $idU = $_SESSION['id'];
@@ -274,10 +277,7 @@ $nom = $utilisateur->getNom();
                         echo "Database error: " . $e->getMessage();
                     }
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT COUNT(numero) AS factCount FROM factures WHERE idU = :idU");
                         $idU = $_SESSION['id'];
@@ -308,10 +308,7 @@ $nom = $utilisateur->getNom();
                         </div>
                         <?php
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT COUNT(numero) AS Partipaid_count FROM factures WHERE etat = :etat");
                         $etat = "Partiellement payée";
@@ -326,10 +323,7 @@ $nom = $utilisateur->getNom();
                         echo "Database error: " . $e->getMessage();
                     }
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT SUM(montant) AS somme FROM paiement WHERE idUser = :idUser ");
                         $idU = $_SESSION['id'];
@@ -371,10 +365,7 @@ $nom = $utilisateur->getNom();
                         </div>
                         <?php
                        try {
-                        $pdo = new PDO("mysql:host=localhost;dbname=appwebfactures", "root", "", [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                        ]);
+                        $pdo = dbU_connect();
                         
                         $req = $pdo->prepare("SELECT COUNT(idClient) AS clientsCount FROM client where idUser = :idUser");
                         $iduser = $_SESSION['id'];
@@ -468,7 +459,7 @@ $nom = $utilisateur->getNom();
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; CHAIB Saad & Sqli 2024</span>
                     </div>
                 </div>
             </footer>

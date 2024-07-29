@@ -1,3 +1,18 @@
+<?php
+session_start();
+require_once __DIR__.'/../model/facture.php';
+require_once __DIR__.'/../model/utilisateur.php';
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$utilisateur = new utilisateur("", "", "");
+$idU = $_SESSION['id'];
+$utilisateur = $utilisateur->selectById($idU);
+$nom = $utilisateur->getNom();
+$listeFacture = listeFacture();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +24,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dashboard</title>
+    <title>Table des factures</title>
 
     <!-- Custom fonts for this template-->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
@@ -55,24 +70,6 @@ td:nth-child(even) {background-color: #f2f2f2;}
 
 <body id="page-top">
       
-         <?php
-// At the top of the file, add:
-require_once __DIR__.'/../model/facture.php';
-require_once __DIR__.'/../model/utilisateur.php';
-require_once __DIR__.'/../model/client.php';
-$listeFacture = listeFacture();
-
-// Ensure user is logged in
-if (!isset($_SESSION['id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$utilisateur = new utilisateur("", "", "");
-$idU = $_SESSION['id'];
-$utilisateur = $utilisateur->selectById($idU);
-$nom = $utilisateur->getNom();
-?>
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -414,7 +411,7 @@ $nom = $utilisateur->getNom();
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; CHAIB Saad & Sqli 2024</span>
                     </div>
                 </div>
             </footer>

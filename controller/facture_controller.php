@@ -1,30 +1,17 @@
- <?php
+<?php
  require_once 'model/facture.php';
- function listeFactureAction(){
-     $listeFacture= listeFacture();
-     require_once 'view/layout.php';
- }
- function CreerFactureAction(){
-    require_once ('facture1.php');
- }
  function storeFacture($d, $m, $e, $idC, $idP) {
-    try {
-        // Assuming $d, $m, $e, $idC, and $idP are already defined
+     try {
         $fac = new Facture($d, $m, $e, $idC, $idP);
-        
-        if ($fac->ajouterFacture()) {
-            header('Location: view/layout.php');
-            exit(); // Make sure to call exit after header redirection
-        } else {
-            echo 'Error adding facture';
-        }
+        $fac->ajouterFacture();
+        header('Location: view/layout.php');
+        exit();      
     } catch (Exception $e) {
         echo "An error occurred: " . $e->getMessage();
     }
     
 }
  function editFacture($d, $m, $e, $idC, $idP,$num) {
-   require_once ('model/facture.php');
    $fac = new Facture($d, $m, $e, $idC, $idP);
    if($fac->loadFactureByNumero($num)) {
        $fac->modifierFacture($d, $m, $e, $idC, $idP);
@@ -35,7 +22,6 @@
    }
 }
 function deleteFacture($d, $m, $e, $idC, $idP,$num) {
-   require_once ('model/facture.php');
    $fac = new Facture($d, $m, $e, $idC, $idP);
    if($fac->loadFactureByNumero($num)) {
        $fac->supprimerFacture($num);
@@ -45,5 +31,6 @@ function deleteFacture($d, $m, $e, $idC, $idP,$num) {
        echo 'Error deleting facture';
    }
 }
- ?>
-    
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+?>

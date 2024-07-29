@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login</title>
+    <title>Ajouter Client</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -61,7 +61,7 @@
                                 <input type="email" class="form-control" aria-describedby="emailHelp" name="email" id="email">                            </div>     
                             <div class="form-group">
                                     <label for="tel">Numéro de télephone</label>
-                                    <input type="tel" name="tel" class="form-control" pattern="\+[0-9]{1,3}[0-9]{4,14}" placeholder="+33 123 456 789" required>
+                                    <input type="tel" name="tel" class="form-control"  placeholder="+33 123 456 789" >
                             </div>
                         
                             

@@ -1,3 +1,8 @@
+<?php
+session_start();
+require_once 'model/facture.php';
+require_once 'model/paiement.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +14,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login</title>
+    <title>Ajouter Facture</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -48,15 +53,14 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Ajouter Facture</h1>
                         </div>
-                        <?php
+<?php
 try {
     // Connexion à la base de données
-    $pdo=new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
+    $pdo=dbC_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Préparation et exécution de la requête pour obtenir les idClient
     $query = 'SELECT idClient FROM client where idUser = :idUser';
-    session_start();
     $id=$_SESSION['id'];
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':idUser', $id, PDO::PARAM_INT);
@@ -64,6 +68,26 @@ try {
 
     // Récupération des résultats
     $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo 'Erreur : ' . $e->getMessage();
+}
+?>
+<?php
+try {
+    // Connexion à la base de données
+    $pdp=dbP_connect();
+    $pdp->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Préparation et exécution de la requête pour obtenir les idClient
+    $query = 'SELECT idPaiement,montant FROM paiement where idUser = :idUser';
+    $stmtp = $pdp->prepare($query);
+    $stmtp->bindParam(':idUser', $id, PDO::PARAM_INT);
+    $stmtp->execute();
+
+    // Récupération des résultats
+    $paiements = $stmtp->fetchAll(PDO::FETCH_ASSOC);
+    $paiements[] = ['idPaiement' => 0, 'montant' => 0];
+
 } catch (PDOException $e) {
     echo 'Erreur : ' . $e->getMessage();
 }
@@ -76,7 +100,7 @@ try {
     </div> 
     <div class="form-group">
         <label for="montantTotal">Montant Total</label>
-        <input type="number" class="form-control" step="0.001" placeholder="ex: 15.756" name="montantTotal" id="montantTotal">
+        <input type="number" class="form-control" step="0.001" placeholder="ex: 15.756" name="montantTotal" id="montantTotal" required>
     </div>
     <div class="form-group">
         <label for="etat">Statut de la facture :</label>
@@ -94,17 +118,40 @@ try {
                     <?php echo htmlspecialchars($client['idClient']); ?>
                 </option>
             <?php endforeach; ?>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="idPaiement">Id Paiement</label>
-        <input type="number" class="form-control" name="idP" id="idPaiement" placeholder="ex: 15">
-    </div>
+        </select></div>
+        <div class="form-group">
+    <label for="idP">Id Paiement</label>
+    <select class="form-control" name="idP" id="idP">
+        <option value="">Sélectionnez un ID de paiement</option>
+        <?php foreach ($paiements as $paiement): ?>
+            <option value="<?php echo htmlspecialchars($paiement['idPaiement']); ?>">
+                <?php echo htmlspecialchars($paiement['idPaiement']); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+<div class="form-group">
+    <label for="mont">Montant du paiement effectué</label>
+    <input type="number" class="form-control" name="mont" id="mont" value="" readonly>
+</div>
+
+<script>
+    document.getElementById('idP').addEventListener('change', function() {
+        var selectedIndex = this.selectedIndex - 1; 
+        if (selectedIndex >= 0) {
+            var selectedPayment = <?php echo json_encode($paiements); ?>[selectedIndex];
+            document.getElementById('mont').value = selectedPayment.montant;
+        } else {
+            document.getElementById('mont').value = ''; 
+        }
+    });
+</script>
+    
                             <script>
                                 document.getElementById('etat').addEventListener('change', function() {
                                     var etatValue = this.value;
-                                    var idPaiementField = document.getElementById('idPaiement');
-                                    var montantTotalField = document.getElementById('montantTotal');
+                                    var idPaiementField = document.getElementById('idP');
+                                    var montantTotalField = document.getElementById('mont');
                                     
                                     if (etatValue === 'Impayée') {
                                         idPaiementField.value = '0';

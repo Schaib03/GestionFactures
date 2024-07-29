@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 class Facture {
     private $numero;
     private $date;
@@ -10,29 +10,12 @@ class Facture {
     private $idU;
 
     public function __construct($date, $montantTotal, $etat, $idC, $idP) {
-    if(session_start()){
-        if(isset($_SESSION['login'])) {
-             $this->idU = $_SESSION['id'];
-    } else {
-        session_start();
-        if(isset($_SESSION['login'])) {
-            $this->idU = $_SESSION['id'];}
-        echo "You are not logged i wown.";
-    }
-    }
-    else{
-        echo "You are not logged in.";
-    }
-    
-    
-
+        $this->idU = $_SESSION['id'];
         $this->date = $date;
         $this->montantTotal = $montantTotal;
         $this->etat = $etat;
         $this->idC = $idC;
         $this->idP = $idP;
-        
-        
     }
     public function getDate() {
         return $this->date;
@@ -52,34 +35,23 @@ class Facture {
     public function getIdU() {
         return $this->idU;
     }
-   public function ajouterFacture() {
+    public function ajouterFacture() {
     try {
-        // Assuming db_connect() is your function to connect to the database
         $pdo = dbC_connect();
-        
         $query = "INSERT INTO factures (date, montantTotal, etat, idC, idP, idU) VALUES (:date, :montantTotal, :etat, :idC, :idP, :idU)";
         $stmt = $pdo->prepare($query);
         $currentDateTime = (new DateTime())->format('Y-m-d');
-        // Binding parameters
         $stmt->bindParam(':date', $currentDateTime);
         $stmt->bindParam(':montantTotal', $this->montantTotal);
-        $stmt->bindParam(':etat', htmlspecialchars(($this->etat)));
+        $stmt->bindParam(':etat', $this->etat);
         $stmt->bindParam(':idC', $this->idC);
         $stmt->bindParam(':idP', $this->idP);
         $stmt->bindParam(':idU', $this->idU);
-        
-        // Execute the statement
         $stmt->execute();
-        
-        // Optionally, you can return true to indicate success
         return true;
     } catch (PDOException $e) {
-        // Catch PDO specific exceptions
-        echo "PDO error: " . $e->getMessage();
         return false;
     } catch (Exception $e) {
-        // Catch any other exceptions
-        echo "General error: " . $e->getMessage();
         return false;
     }
     
@@ -152,10 +124,25 @@ class Facture {
     }  
 }
 function dbC_connect(){
-    return new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
-}
+    $host = 'db';
+    $db   = 'appwebfactures';
+    $user = 'appuser';
+    $pass = 'apppassword';
+    $charset = 'utf8mb4';
+
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ];
+
+    try {
+        return new PDO($dsn, $user, $pass, $options);
+    } catch (\PDOException $e) {
+        throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    }}
 function listeFacture(){
-    session_start();
     if(isset($_SESSION['login'])) {
         $iduser = $_SESSION['id'];
     }
@@ -166,8 +153,5 @@ function listeFacture(){
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 
-}
-
-
-     
-?>  
+}  
+?>
