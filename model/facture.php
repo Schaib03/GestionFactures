@@ -35,6 +35,9 @@ class Facture {
     public function getIdU() {
         return $this->idU;
     }
+    public function getNumero() {
+        return $this->numero;
+    }
     public function ajouterFacture() {
     try {
         $pdo = dbC_connect();

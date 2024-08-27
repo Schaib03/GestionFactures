@@ -75,7 +75,7 @@ try {
 <?php
 try {
     // Connexion à la base de données
-    $pdp=dbP_connect();
+    $pdp=dbC_connect();
     $pdp->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Préparation et exécution de la requête pour obtenir les idClient

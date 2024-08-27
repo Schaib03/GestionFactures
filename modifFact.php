@@ -13,6 +13,7 @@ if($fac->loadFactureByNumero($num)) {
    $e=$fac->getEtat();
    $iC=$fac->getIdC();
    $iP=$fac->getIdP();
+   $n=$fac->getNumero();
  }
 ?>
 
@@ -70,7 +71,7 @@ if($fac->loadFactureByNumero($num)) {
 <?php
                                                 try {
                             // Connexion à la base de données
-                            $pdo=new PDO('mysql:host=localhost;dbname=appwebFactures','root','');
+                            $pdo=dbC_connect();
                             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                             // Préparation et exécution de la requête pour obtenir les idClient
@@ -90,7 +91,7 @@ if($fac->loadFactureByNumero($num)) {
 <?php
 try {
     // Connexion à la base de données
-    $pdp=dbP_connect();
+    $pdp=dbC_connect();
     $pdp->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Préparation et exécution de la requête pour obtenir les idClient
@@ -109,12 +110,12 @@ try {
                         <form action="editfact.php" method="post" class="user">
                         <div class="form-group" style="display: none;">
                             <label for="num">Numero</label>
-                            <input type  ="number" class="form-control" name="num" id="num" value="<?php echo htmlspecialchars($num); ?>" readonly>   
+                            <input type  ="number" class="form-control" name="num" id="num" value="<?php echo htmlspecialchars($n); ?>" readonly>   
                     
                         </div>
                         <div class="form-group">
                             <label for="id">Numero</label>
-                            <input type ="number" class="form-control" name="id" id="id" value="<?php echo htmlspecialchars($id); ?>" readonly>   </div>
+                            <input type ="number" class="form-control" name="id" id="id" value="<?php echo htmlspecialchars($num); ?>" readonly>   </div>
                             <div class="form-group">
                                 <label for="etat">Date</label>
                               <input type="date" class="form-control" name="date" id="date" value="<?php echo htmlspecialchars($d); ?>" required>                            </div> 
@@ -140,15 +141,27 @@ try {
         </select>
     </div>
     <div class="form-group">
-        <label for="idC">Id Paiement</label>
+        <label for="idP">Id Paiement</label>
         <select class="form-control" name="idP" id="idP">
-            <?php foreach ($paiements as $paiement): ?>
-                <option value="<?php echo htmlspecialchars($paiement['idPaiement']); ?>">
-                    <?php echo htmlspecialchars($paiement['idPaiement']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <option value="">Sélectionnez un ID de paiement</option>
+        <?php foreach ($paiements as $paiement): ?>
+            <option value="<?php echo htmlspecialchars($paiement['idPaiement']); ?>">
+                <?php echo htmlspecialchars($paiement['idPaiement']); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
     </div>
+    <script>
+    document.getElementById('idP').addEventListener('change', function() {
+        var selectedIndex = this.selectedIndex - 1; 
+        if (selectedIndex >= 0) {
+            var selectedPayment = <?php echo json_encode($paiements); ?>[selectedIndex];
+            document.getElementById('mont').value = selectedPayment.montant;
+        } else {
+            document.getElementById('mont').value = ''; 
+        }
+    });
+</script>
                             <script>
                                 document.getElementById('etat').addEventListener('change', function() {
                                     var etatValue = this.value;

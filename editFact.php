@@ -21,7 +21,7 @@ if ($montant > $m) {
             window.location.href = 'view/layout.php';
         }, 1000); // 1 second delay
     </script>";
-} else if ($montant < $m && ($e == "Payée" || $e == "Impayée")) {
+} else if ($montant>0 && ($montant < $m) && ($e == "Payée" || $e == "Impayée")) {
     echo "<script>
         alert('L\'état de la facture doit etre : Partiellement payée');
         setTimeout(function() {
